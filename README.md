@@ -1,6 +1,6 @@
 # Northcoders News API
 
-For instructions, please head over to [L2C NC News](https://l2c.northcoders.com/courses/be/nc-news).
+To successfully connect to the databases locally, you must add both .env.test and .env.development files.
 
 
 
