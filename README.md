@@ -1,6 +1,6 @@
 # Northcoders News API
 
-To successfully connect to the databases locally, you must add both .env.test and .env.development files.
+To successfully connect to the databases locally, you must add both a .env.test file containing 'PGDATABASE=<YOURTESTDATABASE>' and a .env.development file containing 'PGDATABASE=<YOURACTUALDATABASE>.
 
 
 
