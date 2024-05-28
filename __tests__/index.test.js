@@ -4,6 +4,7 @@ const request = require("supertest")
 const seed = require("../db/seeds/seed")
 const data = require("../db/data/test-data")
 const express = require("express")
+const endpoints = require("../endpoints.json")
 
 beforeEach(() => seed(data))
 afterAll(() => db.end())
@@ -25,4 +26,15 @@ describe("GET /api/topics", () => {
             })
         })
     })
+})
+
+describe("GET /api", () => {
+    test('GET 200: returns object describing all available endpoints', () => {
+        return request(app)
+        .get("/api")
+        .expect(200)
+        .then(({body}) => {
+            expect(body.endpoints).toEqual(endpoints)
+        })
+    });
 })
