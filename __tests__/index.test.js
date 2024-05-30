@@ -228,25 +228,52 @@ describe("PATCH /api/articles/:article_id", () => {
 });
 
 describe("DELETE /api/comments/:comment_id", () => {
-    test("DELETE 204: deletes comment with the comment ID passed", () => {
-        return request(app)
-        .delete("/api/comments/3")
-        .expect(204)
-    });
-    test("DELETE 404: returns correct error message when given a non-existent ID", () => {
-        return request(app)
-        .delete("/api/comments/9999")
-        .expect(404)
-        .then(({body}) => {
-            expect(body.msg).toBe("Comment Does Not Exist")
-        })
-    });
-    test("DELETE 400: returns correct error message when given a invalid ID", () => {
-        return request(app)
-        .delete("/api/comments/not_an_id")
-        .expect(400)
-        .then(({body}) => {
-            expect(body.msg).toBe("Bad Request")
-        })
-    });
+  test("DELETE 204: deletes comment with the comment ID passed", () => {
+    return request(app).delete("/api/comments/3").expect(204);
+  });
+  test("DELETE 404: returns correct error message when given a non-existent ID", () => {
+    return request(app)
+      .delete("/api/comments/9999")
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Comment Does Not Exist");
+      });
+  });
+  test("DELETE 400: returns correct error message when given a invalid ID", () => {
+    return request(app)
+      .delete("/api/comments/not_an_id")
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Bad Request");
+      });
+  });
+});
+
+describe("GET /api/users", () => {
+  test("GET 200: returns an array of users", () => {
+    return request(app)
+      .get("/api/users")
+      .expect(200)
+      .then(({ body: { users } }) => {
+        expect(users.length).toBe(4);
+        users.forEach((user) => {
+          expect(user).toEqual(
+            expect.objectContaining({
+              username: expect.any(String),
+              name: expect.any(String),
+              avatar_url: expect.any(String),
+            })
+          );
+        });
+      });
+  });
+
+  test("GET 404: returns correct error message if invalid endpoint", () => {
+    return request(app)
+      .get("/api/user")
+      .expect(404)
+      .then(({ body: { msg } }) => {
+        expect(msg).toBe("Route Not Found");
+      });
+  });
 });
