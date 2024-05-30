@@ -1,9 +1,11 @@
 const express = require("express");
 const app = express();
+app.use(express.json())
+
 const { getTopics } = require("./db/controllers/topics-controllers");
 const { getEndpoints } = require("./db/controllers/app-controllers");
 const {getArticlesById, getArticles} = require("./db/controllers/articles-controllers")
-const {getCommentsByArticleId} = require("./db/controllers/comments-controllers")
+const {getCommentsByArticleId, postCommentByArticleId} = require("./db/controllers/comments-controllers")
 
 app.get("/api/topics", getTopics);
 
@@ -14,6 +16,9 @@ app.get("/api/articles/:article_id", getArticlesById)
 app.get("/api/articles", getArticles)
 
 app.get("/api/articles/:article_id/comments", getCommentsByArticleId)
+
+app.post("/api/articles/:article_id/comments", postCommentByArticleId)
+
 
 app.use((err, req, res, next) => {
   if (err.code === "23502" || err.code === "22P02") {

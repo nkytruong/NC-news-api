@@ -151,3 +151,35 @@ describe("GET /api/articles/:article_id/comments", () => {
       });
   });
 });
+
+describe("POST /api/articles/:article_id/comments", () => {
+  test("POST 201: returns added comment for an article", () => {
+    const newComment = {
+      username: "butter_bridge",
+      body: "Hellooooo",
+    };
+    return request(app)
+      .post("/api/articles/1/comments")
+      .send(newComment)
+      .expect(201)
+      .then(({ body }) => {
+        expect(body.postedComment).toMatchObject({
+          author: "butter_bridge",
+          body: "Hellooooo",
+        });
+      });
+  });
+  test("POST 400: returns correct error message if passed a comment with incorrect keys", () => {
+    const newComment = {
+      username: "butter_bridge",
+      comment: "Hellooooo",
+    };
+    return request(app)
+      .post("/api/articles/1/comments")
+      .send(newComment)
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Bad Request");
+      });
+  });
+});
