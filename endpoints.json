@@ -2,9 +2,7 @@
   "GET /api": {
     "description": "serves up a json representation of all the available endpoints of the api",
     "queries": [],
-    "exampleResponse": {
-
-    }
+    "exampleResponse": {}
   },
   "GET /api/topics": {
     "description": "serves an array of all topics",
@@ -55,19 +53,19 @@
     "queries": [],
     "exampleResponse": {
       "article": [
-          {
-            "comment_id": 16,
-            "body": "This is a bad article name",
-            "article_id": 6,
-            "author": "butter_bridge",
-            "votes": 1,
-            "created_at": "2020-10-11T15:23:00.000Z"
-          }
-        ]
+        {
+          "comment_id": 16,
+          "body": "This is a bad article name",
+          "article_id": 6,
+          "author": "butter_bridge",
+          "votes": 1,
+          "created_at": "2020-10-11T15:23:00.000Z"
+        }
+      ]
     }
   },
 
-  "POST /api/articles/:article_id/comments":{
+  "POST /api/articles/:article_id/comments": {
     "description": "inserts a new comment into the comments table, responds with the posted comment object",
     "queries": [],
     "exampleResponse": {
@@ -78,6 +76,20 @@
       "votes": 0,
       "created_at": "2024-05-30T10:31:27.553Z"
     }
+  },
 
+  "PATCH /api/articles/:article_id": {
+    "description": "updates an article with the article ID passed",
+    "queries": [],
+    "exampleResponse": {
+      "article_id": 1,
+      "title": "Living in the shadow of a great man",
+      "topic": "mitch",
+      "author": "butter_bridge",
+      "body": "I find this existence challenging",
+      "created_at": "2020-07-09T20:11:00.000Z",
+      "votes": 101,
+      "article_img_url": "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700"
+    }
   }
 }
