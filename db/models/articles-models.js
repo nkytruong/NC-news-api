@@ -31,7 +31,7 @@ exports.selectArticles = () => {
   FROM articles
   JOIN comments ON articles.article_id = comments.article_id
   GROUP BY articles.article_id
-  ORDER BY articles.created_at DESC;`
+  ORDER BY articles.created_at DESC;`;
 
   return db.query(queryStr).then((result) => {
     return result.rows;
@@ -39,11 +39,25 @@ exports.selectArticles = () => {
 };
 
 exports.checkArticleIdExists = (article_id) => {
-    return db
+  return db
     .query(`SELECT * FROM articles WHERE article_id = $1`, [article_id])
-    .then(({rows}) => {
-        if(!rows.length){
-            return Promise.reject({status: 404, msg: "Article Not Found"})
-        }
-    })
-}
+    .then(({ rows }) => {
+      if (!rows.length) {
+        return Promise.reject({ status: 404, msg: "Article Not Found" });
+      }
+    });
+};
+
+exports.updateArticleVotesById = (body, article_id) => {
+  const { inc_votes } = body;
+
+  const queryStr = `UPDATE articles 
+    SET votes = votes + $1
+    WHERE article_id = $2
+    RETURNING *;`;
+  const queryValues = [inc_votes, article_id];
+
+  return db.query(queryStr, queryValues).then(({ rows }) => {
+    return rows[0];
+  });
+};
