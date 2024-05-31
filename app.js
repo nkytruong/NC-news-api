@@ -34,6 +34,7 @@ app.delete("/api/comments/:comment_id", deleteCommentByCommentId);
 
 app.get("/api/users", getUsers);
 
+
 app.all("*", (req, res) => {
   res.status(404).send({ msg: "Route Not Found" });
 });

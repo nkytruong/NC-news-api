@@ -83,7 +83,7 @@ describe("GET /api/articles", () => {
       .get("/api/articles")
       .expect(200)
       .then(({ body: { articles } }) => {
-        expect((articles.length = 13));
+        expect(articles.length).toBe(13);
         articles.forEach((article) => {
           expect(article).toMatchObject({
             author: expect.any(String),
@@ -96,6 +96,25 @@ describe("GET /api/articles", () => {
             comment_count: expect.any(Number),
           });
         });
+      });
+  });
+  test("GET 200: returns only the articles of the specified topic", () => {
+    return request(app)
+      .get("/api/articles?topic=mitch")
+      .expect(200)
+      .then(({ body: { articles } }) => {
+        expect(articles.length).toBe(12);
+        articles.forEach((article) => {
+          expect(article.topic).toBe("mitch");
+        });
+      });
+  });
+  test("GET 404: returns correct error message if passed topic that doesn't exist", () => {
+    return request(app)
+      .get("/api/articles?topic=bananas")
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe("No Articles Found");
       });
   });
 });
