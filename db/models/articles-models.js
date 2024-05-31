@@ -19,8 +19,8 @@ exports.selectArticleById = (article_id) => {
   }
 };
 
-exports.selectArticles = () => {
-  const queryStr = `SELECT articles.title, 
+exports.selectArticles = (topic) => {
+  let queryStr = `SELECT articles.title, 
   articles.topic, 
   articles.author, 
   articles.created_at, 
@@ -29,12 +29,25 @@ exports.selectArticles = () => {
   articles.article_id, 
   CAST(COUNT(comments.body) AS INT) AS comment_count 
   FROM articles
-  JOIN comments ON articles.article_id = comments.article_id
-  GROUP BY articles.article_id
-  ORDER BY articles.created_at DESC;`;
+  LEFT JOIN comments ON articles.article_id = comments.article_id `
+  
+  let queryValues = []
+  
+  if(topic){
+    queryStr += `WHERE topic = $1 `
+    queryValues.push(topic)
+  } 
+  
+  queryStr += ` GROUP BY articles.article_id
+  ORDER BY articles.created_at DESC ;`
+  
 
-  return db.query(queryStr).then((result) => {
-    return result.rows;
+  return db.query(queryStr, queryValues).then(({rows}) => {
+    if(!rows.length){
+      return Promise.reject({status: 404, msg: "No Articles Found"})
+    } else {
+      return rows;
+    }
   });
 };
 
