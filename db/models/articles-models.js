@@ -5,22 +5,19 @@ exports.selectArticleById = (article_id) => {
     articles.*,
     CAST(COUNT(comments.body) AS INT) AS comment_count 
     FROM articles
-   JOIN topics ON topics.slug = articles.topic
-     JOIN users ON users.username = articles.author
-     JOIN comments ON articles.article_id = comments.article_id
-     GROUP BY articles.article_id
-     HAVING articles.article_id = $1`;
+    JOIN comments ON articles.article_id = comments.article_id
+    GROUP BY articles.article_id
+    HAVING articles.article_id = $1`;
 
   const queryValues = [article_id];
 
-  const notANumber = /[a-zA-Z]/.test(article_id);
-  if (notANumber) {
-    return Promise.reject({ status: 400, msg: "Bad Request" });
-  } else {
-    return db.query(queryStr, queryValues).then((result) => {
-      return result.rows;
-    });
-  }
+  return db.query(queryStr, queryValues).then((result) => {
+    if (result.rows.length === 0) {
+      return Promise.reject({ status: 404, msg: "No Article Found" });
+    } else {
+      return result.rows[0];
+    }
+  });
 };
 
 exports.selectArticles = (topic) => {

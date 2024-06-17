@@ -39,6 +39,14 @@ describe("GET /api", () => {
         expect(body.endpoints).toEqual(endpoints);
       });
   });
+  test("GET 404: returns correct error message if invalid endpoint", () => {
+    return request(app)
+      .get("/api/userz")
+      .expect(404)
+      .then(({ body: { msg } }) => {
+        expect(msg).toBe("Route Not Found");
+      });
+  });
 });
 
 describe("GET /api/articles/:article_id", () => {
@@ -47,7 +55,7 @@ describe("GET /api/articles/:article_id", () => {
       .get("/api/articles/1")
       .expect(200)
       .then(({ body }) => {
-        expect(body.article[0]).toMatchObject({
+        expect(body.article).toMatchObject({
           article_id: expect.any(Number),
           title: expect.any(String),
           topic: expect.any(String),
@@ -81,8 +89,8 @@ describe("GET /api/articles/:article_id", () => {
       .get("/api/articles/1")
       .expect(200)
       .then(({ body }) => {
-        expect(body.article[0]).toMatchObject({
-          article_id: expect.any(Number),
+        expect(body.article).toMatchObject({
+          article_id: 1,
           title: expect.any(String),
           topic: expect.any(String),
           author: expect.any(String),
@@ -90,7 +98,7 @@ describe("GET /api/articles/:article_id", () => {
           created_at: expect.any(String),
           votes: expect.any(Number),
           article_img_url: expect.any(String),
-          comment_count: 11
+          comment_count: 11,
         });
       });
   });
@@ -136,6 +144,14 @@ describe("GET /api/articles", () => {
         expect(body.msg).toBe("No Articles Found");
       });
   });
+  test("GET 404: returns correct error message if passed topic with no articles", () => {
+    return request(app)
+      .get("/api/articles?topic=paper")
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe("No Articles Found");
+      });
+  });
 });
 
 describe("GET /api/articles/:article_id/comments", () => {
@@ -144,6 +160,7 @@ describe("GET /api/articles/:article_id/comments", () => {
       .get("/api/articles/1/comments")
       .expect(200)
       .then(({ body: { comments } }) => {
+        expect(comments.length).toBe(11);
         comments.forEach((comment) => {
           expect(comment).toMatchObject({
             comment_id: expect.any(Number),
@@ -151,7 +168,7 @@ describe("GET /api/articles/:article_id/comments", () => {
             created_at: expect.any(String),
             author: expect.any(String),
             body: expect.any(String),
-            article_id: expect.any(Number),
+            article_id: 1,
           });
         });
       });
@@ -220,6 +237,19 @@ describe("POST /api/articles/:article_id/comments", () => {
         expect(body.msg).toBe("Bad Request");
       });
   });
+  test("POST 404: returns correct error message if passed a comment to an article that does not exist", () => {
+    const newComment = {
+      username: "butter_bridge",
+      body: "Hellooooo",
+    };
+    return request(app)
+      .post("/api/articles/9999/comments")
+      .send(newComment)
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Article Not Found");
+      });
+  });
 });
 
 describe("PATCH /api/articles/:article_id", () => {
@@ -251,6 +281,16 @@ describe("PATCH /api/articles/:article_id", () => {
       .expect(404)
       .then(({ body }) => {
         expect(body.msg).toBe("Article Not Found");
+      });
+  });
+  test("PATCH 400: returns correct error message if passed invalid article id", () => {
+    const votesToBeUpdatedBy = { inc_votes: 1 };
+    return request(app)
+      .patch("/api/articles/bananas")
+      .send(votesToBeUpdatedBy)
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Bad Request");
       });
   });
   test("PATCH 400: returns correct error message if passed object with invalid value", () => {
@@ -303,15 +343,6 @@ describe("GET /api/users", () => {
             })
           );
         });
-      });
-  });
-
-  test("GET 404: returns correct error message if invalid endpoint", () => {
-    return request(app)
-      .get("/api/user")
-      .expect(404)
-      .then(({ body: { msg } }) => {
-        expect(msg).toBe("Route Not Found");
       });
   });
 });
