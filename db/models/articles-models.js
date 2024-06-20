@@ -3,9 +3,9 @@ const db = require("../connection");
 exports.selectArticleById = (article_id) => {
   let queryStr = `SELECT
     articles.*,
-    CAST(COUNT(comments.body) AS INT) AS comment_count 
+   CAST(COUNT(comments.body) AS INT) AS comment_count 
     FROM articles
-    JOIN comments ON articles.article_id = comments.article_id
+    LEFT JOIN comments ON articles.article_id = comments.article_id
     GROUP BY articles.article_id
     HAVING articles.article_id = $1`;
 
