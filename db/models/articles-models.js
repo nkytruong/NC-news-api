@@ -20,7 +20,14 @@ exports.selectArticleById = (article_id) => {
   });
 };
 
-exports.selectArticles = (topic) => {
+exports.selectArticles = (topic, sort_by = "created_at", order = "desc") => {
+  const validSortBy = ["created_at", "comment_count", "votes"]
+  const validOrder = ["asc", "desc"]
+
+  if(!validSortBy.includes(sort_by) || !validOrder.includes(order)) {
+    return Promise.reject({status: 400, msg: "Bad Request"})
+  }
+console.log(topic, sort_by, order)
   let queryStr = `SELECT articles.title, 
   articles.topic, 
   articles.author, 
@@ -39,13 +46,21 @@ exports.selectArticles = (topic) => {
     queryValues.push(topic);
   }
 
-  queryStr += ` GROUP BY articles.article_id
-  ORDER BY articles.created_at DESC ;`;
+  queryStr += "GROUP BY articles.article_id "
+
+  if(sort_by === "comment_count"){
+    queryStr += `ORDER BY ${sort_by} ${order}`
+  } else {
+    queryStr += ` ORDER BY articles.${sort_by} ${order} ;`;
+  }
+  
+  
 
   return db.query(queryStr, queryValues).then(({ rows }) => {
     if (!rows.length) {
       return Promise.reject({ status: 404, msg: "No Articles Found" });
     } else {
+      console.log(rows)
       return rows;
     }
   });

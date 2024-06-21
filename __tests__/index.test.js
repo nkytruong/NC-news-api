@@ -135,7 +135,55 @@ describe("GET /api/articles", () => {
           expect(article.topic).toBe("mitch");
         });
       });
-  });
+    });
+    test("GET 200: returns articles sorted by date created in descending order", () => {
+      return request(app)
+      .get("/api/articles?sort_by=created_at&order=desc")
+      .expect(200)
+      .then(({body: {articles}}) => {
+        expect(articles).toBeSortedBy("created_at", {descending: true})
+      })
+    })
+    test("GET 200: returns articles sorted by date created in ascending order", () => {
+      return request(app)
+      .get("/api/articles?sort_by=created_at&order=asc")
+      .expect(200)
+      .then(({body: {articles}}) => {
+        expect(articles).toBeSortedBy("created_at", {ascending: true})
+      })
+    })
+    test("GET 200: returns articles sorted by comment count in ascending order", () => {
+      return request(app)
+      .get("/api/articles?sort_by=comment_count&order=asc")
+      .expect(200)
+      .then(({body: {articles}}) => {
+        expect(articles).toBeSortedBy("comment_count", {ascending: true})
+      })
+    })
+    test("GET 200: returns articles sorted by comment count in descending order", () => {
+      return request(app)
+      .get("/api/articles?sort_by=comment_count&order=desc")
+      .expect(200)
+      .then(({body: {articles}}) => {
+        expect(articles).toBeSortedBy("comment_count", {descending: true})
+      })
+    })
+    test("GET 200: returns articles sorted by number of votes in ascending order", () => {
+      return request(app)
+      .get("/api/articles?sort_by=votes&order=asc")
+      .expect(200)
+      .then(({body: {articles}}) => {
+        expect(articles).toBeSortedBy("votes", {ascending: true})
+      })
+    });
+    test("GET 200: returns articles sorted by number of votes in descending order", () => {
+      return request(app)
+      .get("/api/articles?sort_by=votes&order=desc")
+      .expect(200)
+      .then(({body: {articles}}) => {
+        expect(articles).toBeSortedBy("votes", {descending: true})
+      })
+    });
   test("GET 404: returns correct error message if passed topic that doesn't exist", () => {
     return request(app)
       .get("/api/articles?topic=bananas")
@@ -150,6 +198,22 @@ describe("GET /api/articles", () => {
       .expect(404)
       .then(({ body }) => {
         expect(body.msg).toBe("No Articles Found");
+      });
+  });
+  xtest("GET 400: returns correct error message when passed an invalid order query", () => {
+    return request(app)
+      .get("/api/treasures?order=banana")
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Bad request");
+      });
+  });
+  xtest("GET 400: returns correct error message when passed an invalid sort_by query", () => {
+    return request(app)
+      .get("/api/treasures?sort_by=banana")
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Bad request");
       });
   });
 });
