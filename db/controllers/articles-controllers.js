@@ -15,10 +15,9 @@ exports.getArticlesById = (req, res, next) => {
 };
 
 exports.getArticles = (req, res, next) => {
-  const {topic, sort_by, order} = req.query
+  const { topic, sort_by, order } = req.query;
   selectArticles(topic, sort_by, order)
     .then((articles) => {
-      console.log(articles)
       res.status(200).send({ articles });
     })
     .catch(next);
@@ -30,7 +29,7 @@ exports.patchArticleVotesById = (req, res, next) => {
 
   const promises = [
     checkArticleIdExists(article_id),
-    updateArticleVotesById(body, article_id)
+    updateArticleVotesById(body, article_id),
   ];
 
   Promise.all(promises)
