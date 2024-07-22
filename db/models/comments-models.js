@@ -18,7 +18,6 @@ exports.addComment = (newComment, article_id) => {
 
   return db.query(queryStr, queryValues).then(({ rows }) => {
     return rows[0];
-    // }
   });
 };
 
