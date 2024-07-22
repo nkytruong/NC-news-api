@@ -83,6 +83,10 @@ exports.updateArticleVotesById = (body, article_id) => {
   const queryValues = [inc_votes, article_id];
 
   return db.query(queryStr, queryValues).then(({ rows }) => {
-    return rows[0];
+    if (!rows.length) {
+      return Promise.reject({ status: 404, msg: "Article Not Found" });
+    } else {
+      return rows[0];
+    }
   });
 };

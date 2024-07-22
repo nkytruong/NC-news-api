@@ -4,37 +4,9 @@ app.use(express.json());
 const cors = require("cors");
 app.use(cors())
 
-const { getTopics } = require("./db/controllers/topics-controllers");
-const { getEndpoints } = require("./db/controllers/app-controllers");
-const {
-  getArticlesById,
-  getArticles,
-  patchArticleVotesById,
-} = require("./db/controllers/articles-controllers");
-const {
-  getCommentsByArticleId,
-  postCommentByArticleId,
-  deleteCommentByCommentId,
-} = require("./db/controllers/comments-controllers");
-const { getUsers } = require("./db/controllers/users-controllers");
+const apiRouter = require('./routes/api-router')
 
-app.get("/api/topics", getTopics);
-
-app.get("/api", getEndpoints);
-
-app.get("/api/articles/:article_id", getArticlesById);
-
-app.get("/api/articles", getArticles);
-
-app.get("/api/articles/:article_id/comments", getCommentsByArticleId);
-
-app.post("/api/articles/:article_id/comments", postCommentByArticleId);
-
-app.patch("/api/articles/:article_id", patchArticleVotesById);
-
-app.delete("/api/comments/:comment_id", deleteCommentByCommentId);
-
-app.get("/api/users", getUsers);
+app.use('/api', apiRouter)
 
 
 app.all("*", (req, res) => {
