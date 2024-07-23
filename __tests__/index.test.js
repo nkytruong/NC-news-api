@@ -410,3 +410,26 @@ describe("GET /api/users", () => {
       });
   });
 });
+
+describe("GET /api/users/:username", () => {
+  test("GET 200: returns user object", () => {
+    return request(app)
+    .get("/api/users/butter_bridge")
+    .expect(200)
+    .then(({body}) => {
+      expect(body.user).toMatchObject({
+        username: 'butter_bridge',
+        name: expect.any(String),
+        avatar_url: expect.any(String),
+      });
+    })
+  });
+  test("GET 404: returns correct error message if passed username that doesn't exist", () => {
+    return request(app)
+      .get("/api/users/alienwoop")
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe("No User Found");
+      });
+  });
+});
