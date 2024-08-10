@@ -414,15 +414,15 @@ describe("GET /api/users", () => {
 describe("GET /api/users/:username", () => {
   test("GET 200: returns user object", () => {
     return request(app)
-    .get("/api/users/butter_bridge")
-    .expect(200)
-    .then(({body}) => {
-      expect(body.user).toMatchObject({
-        username: 'butter_bridge',
-        name: expect.any(String),
-        avatar_url: expect.any(String),
+      .get("/api/users/butter_bridge")
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.user).toMatchObject({
+          username: "butter_bridge",
+          name: expect.any(String),
+          avatar_url: expect.any(String),
+        });
       });
-    })
   });
   test("GET 404: returns correct error message if passed username that doesn't exist", () => {
     return request(app)
@@ -430,6 +430,56 @@ describe("GET /api/users/:username", () => {
       .expect(404)
       .then(({ body }) => {
         expect(body.msg).toBe("No User Found");
+      });
+  });
+});
+
+describe("PATCH /api/comments/:comment_id", () => {
+  test("PATCH 200: returns updated comment", () => {
+    const votesToBeUpdatedBy = { inc_votes: 1 };
+    return request(app)
+      .patch("/api/comments/1")
+      .send(votesToBeUpdatedBy)
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.updatedComment).toMatchObject({
+          comment_id: 1,
+          body: "Oh, I've got compassion running out of my nose, pal! I'm the Sultan of Sentiment!",
+          article_id: 9,
+          author: "butter_bridge",
+          votes: 17,
+          created_at: expect.any(String),
+        });
+      });
+  });
+  test("PATCH 404: returns correct error message if passed comment that doesn't exist", () => {
+    const votesToBeUpdatedBy = { inc_votes: 1 };
+    return request(app)
+      .patch("/api/comments/9999")
+      .send(votesToBeUpdatedBy)
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Comment Not Found");
+      });
+  });
+  test("PATCH 400: returns correct error message if passed invalid comment id", () => {
+    const votesToBeUpdatedBy = { inc_votes: 1 };
+    return request(app)
+      .patch("/api/comments/bananas")
+      .send(votesToBeUpdatedBy)
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Bad Request");
+      });
+  });
+  test("PATCH 400: returns correct error message if passed object with invalid value", () => {
+    const votesToBeUpdatedBy = { inc_votes: "hi" };
+    return request(app)
+      .patch("/api/comments/1")
+      .send(votesToBeUpdatedBy)
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Bad Request");
       });
   });
 });

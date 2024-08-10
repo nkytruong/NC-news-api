@@ -1,9 +1,10 @@
-const { checkArticleIdExists } = require("../models/articles-models");
+const { checkArticleIdExists, updateArticleVotesById } = require("../models/articles-models");
 const {
   selectCommentsByArticleId,
   addComment,
   selectCommentByCommentID,
   removeCommentByCommentId,
+  updateCommentVotesByCommentId,
 } = require("../models/comments-models");
 
 exports.getCommentsByArticleId = (req, res, next) => {
@@ -53,3 +54,14 @@ exports.deleteCommentByCommentId = (req, res, next) => {
     })
     .catch(next);
 };
+
+exports.patchCommentVotesByCommentId = (req, res, next) => {
+  const {body} = req
+  const {comment_id} = req.params
+
+  updateCommentVotesByCommentId(body, comment_id).then((updatedComment) => {
+    res.status(200).send({ updatedComment })
+  })
+  .catch(next)
+
+}
