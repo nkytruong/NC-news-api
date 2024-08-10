@@ -42,3 +42,21 @@ exports.removeCommentByCommentId = (comment_id) => {
     return rows;
   });
 };
+
+exports.updateCommentVotesByCommentId = (body, comment_id) => {
+  const { inc_votes } = body;
+
+  const queryStr = `UPDATE comments
+  SET votes = votes + $1
+  WHERE comment_id = $2
+  RETURNING *;`;
+  const queryValues = [inc_votes, comment_id];
+
+  return db.query(queryStr, queryValues).then(({ rows }) => {
+    if (!rows.length) {
+      return Promise.reject({ status: 404, msg: "Comment Not Found" });
+    } else {
+      return rows[0];
+    }
+  });
+};
